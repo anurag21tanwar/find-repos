@@ -1,0 +1,10 @@
+<h2><%= link_to 'Find GitHub Public Repos', root_path %></h2>
+<%= form_tag(search_repos_path, method: :get) do %>
+  <%= text_field_tag(:username, nil, placeholder: 'Enter Github username') %>
+  <%= submit_tag('Search') %>
+<% end %>
+<% @repos&.each do |repo| %>
+  <ol type='I'>
+    <li><%= link_to repo[:name], repo[:url] %></li>
+  </ol>
+<% end %>
