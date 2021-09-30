@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class GitHubService
-  include Responses
+  include Responses, Memoize
   API_URL = 'https://api.github.com/users/??/repos'
 
   attr_accessor :username
@@ -11,6 +11,18 @@ class GitHubService
   end
 
   def call
+    if present_in_cache?(username)
+      read_from_cache(username)
+    else
+      res = response
+      write_in_cache(username, res)
+      res
+    end
+  end
+
+  private
+
+  def response
     return blank_username_response if username.blank?
 
     response = fetch_repos
@@ -26,8 +38,6 @@ class GitHubService
     Rails.logger.error { e.backtrace.first(25).join("\n") }
     error_response(e)
   end
-
-  private
 
   def fetch_repos
     uri = URI(API_URL.gsub('??', username))

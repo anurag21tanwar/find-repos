@@ -21,5 +21,6 @@ module FindRepos
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
     config.autoload_paths << Rails.root.join('lib')
+    config.cache_store = :memory_store, { size: 64.megabytes }
   end
 end
