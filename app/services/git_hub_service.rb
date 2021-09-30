@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class GitHubService
   include ResponseHelper
   API_URL = 'https://api.github.com/users/??/repos'
@@ -9,11 +11,11 @@ class GitHubService
   end
 
   def call
-    return empty_response if username.blank?
+    return blank_username_response if username.blank?
 
-    response = get_repos
+    response = fetch_repos
     { '200' => format_response(response.body),
-      '404' => not_found_response }.fetch(response.code, failure_response(response))
+      '404' => username_not_found_response }.fetch(response.code, failure_response(response))
   rescue StandardError => e
     Rails.logger.error { e.backtrace.first(25).join("\n") }
     error_response(e)
@@ -21,9 +23,9 @@ class GitHubService
 
   private
 
-  def get_repos
+  def fetch_repos
     uri = URI(API_URL.gsub('??', username))
-    Net::HTTP.start(uri.host, uri.port, :use_ssl => uri.scheme == 'https') do |http|
+    Net::HTTP.start(uri.host, uri.port, use_ssl: uri.scheme == 'https') do |http|
       request = Net::HTTP::Get.new uri
       http.request request
     end
@@ -38,9 +40,7 @@ class GitHubService
     EMPTY_REPOS if payload.blank?
 
     payload.map do |data|
-      unless skip?(data)
-        data.slice('name', 'html_url')
-      end
+      data.slice('name', 'html_url') unless skip?(data)
     end.compact
   end
 
