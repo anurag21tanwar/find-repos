@@ -3,8 +3,20 @@
   <%= text_field_tag(:username, nil, placeholder: 'Enter Github username') %>
   <%= submit_tag('Search') %>
 <% end %>
-<% @repos&.each do |repo| %>
-  <ol type='I'>
-    <li><%= link_to repo[:name], repo[:url] %></li>
-  </ol>
+
+<% unless @repos.nil? %>
+  <% if @error.present? %>
+    <h3>Search failed, error message: <%= @error %></h3>
+  <% else %>
+    <h3>Public repos:</h3>
+    <% if @repos.empty? %>
+      <h5>Repos don't exists</h5>
+    <% else %>
+      <ol type='1'>
+        <% @repos.each do |repo| %>
+          <li><%= link_to repo['name'], repo['html_url'], target: '_blank' %></li>
+        <% end %>
+      </ol>
+    <% end %>
+  <% end %>
 <% end %>

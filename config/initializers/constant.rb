@@ -1,0 +1,2 @@
+EMPTY_REPOS = []
+NO_ERROR = nil

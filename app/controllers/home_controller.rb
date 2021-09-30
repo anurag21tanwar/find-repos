@@ -3,7 +3,7 @@ class HomeController < ApplicationController
   end
 
   def search
-    @repos = RepoSearchService.new(search_params[:username]).call
+    @repos, @error = GitHubService.new(search_params[:username]).call
     render :index
   end
 
