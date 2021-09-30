@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 
-module ResponseHelper
+module Responses
   def blank_username_response
     [EMPTY_REPOS, 'blank username']
-  end
-
-  def empty_response
-    [EMPTY_REPOS, 'not able to get response from github, try again..']
   end
 
   def username_not_found_response

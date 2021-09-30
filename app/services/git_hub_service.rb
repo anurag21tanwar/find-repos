@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class GitHubService
-  include ResponseHelper
+  include Responses
   API_URL = 'https://api.github.com/users/??/repos'
 
   attr_accessor :username
@@ -14,8 +14,14 @@ class GitHubService
     return blank_username_response if username.blank?
 
     response = fetch_repos
-    { '200' => format_response(response.body),
-      '404' => username_not_found_response }.fetch(response.code, failure_response(response))
+    case response.code
+    when '200'
+      format_response(response.body)
+    when '404'
+      username_not_found_response
+    else
+      failure_response(response)
+    end
   rescue StandardError => e
     Rails.logger.error { e.backtrace.first(25).join("\n") }
     error_response(e)
